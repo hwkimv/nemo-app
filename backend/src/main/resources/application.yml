@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: backend
+
+---
+# =======================
+# Cloudtype MariaDB (배포/개발 환경)
+# =======================
+spring:
+  config:
+    activate:
+      on-profile: cloud
+  datasource:
+    url: jdbc:mariadb://svc.sel5.cloudtype.app:30303/nemo
+    username: root          # 권장: root 대신 별도 계정 생성 후 사용
+    password: nemo1234      # 실제 설정한 비밀번호 입력
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update      # 초기 개발 시 update / 운영 단계에선 validate 추천
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+
+---
+# =======================
+# H2 Memory DB (로컬 테스트 환경)
+# =======================
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:mem:nemo-db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop   # 테스트 실행 시 매번 새로 생성/삭제
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# =======================
+# 공통 설정
+# =======================
+jwt:
+  secret: my-jwt-secret-key-very-secure-please-change
+  access-token-expiration: 1800000      # 30분
+  refresh-token-expiration: 1209600000  # 14일
